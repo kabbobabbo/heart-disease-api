@@ -1,7 +1,10 @@
 __pycache__/
 *.pyc
-.venv/
+*.pyo
+*.pyd
+*.env
 .env
-*.joblib
-*.pkl
-.DS_Store
+*.sqlite3
+*.db
+model/*.joblib
+.venv/

@@ -1,9 +1,6 @@
-# app/model_loader.py
 import joblib
 import os
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "model", "heart_model.joblib")
-
-def load_model():
-    model = joblib.load(MODEL_PATH)
-    return model
+# Ensure the path is correct for Docker/Render
+MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', 'model', 'heart_model.joblib')
+model = joblib.load(MODEL_PATH)
