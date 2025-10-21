@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-import joblib
+from app.schemas import HeartData
+from app.model_loader import load_model
+
 import pandas as pd
-from app.schemas import HeartData  # Your Pydantic model
 
 # -----------------------
 # Step 1: Initialize app
@@ -16,7 +16,7 @@ app = FastAPI(
 # -----------------------
 # Step 2: Load model
 # -----------------------
-model = joblib.load("model/heart_model.joblib")
+model = load_model()  # uses the function from model_loader.py
 
 # -----------------------
 # Step 3: Health endpoint
@@ -30,8 +30,10 @@ def health_check():
 # -----------------------
 @app.get("/info")
 def model_info():
-    features = ["age","sex","cp","trestbps","chol","fbs","restecg","thalach",
-                "exang","oldpeak","slope","ca","thal"]
+    features = [
+        "age","sex","cp","trestbps","chol","fbs","restecg","thalach",
+        "exang","oldpeak","slope","ca","thal"
+    ]
     return {"model": "RandomForestClassifier", "features": features}
 
 # -----------------------
@@ -39,13 +41,6 @@ def model_info():
 # -----------------------
 @app.post("/predict")
 def predict(data: HeartData):
-    # Convert Pydantic model to DataFrame with column names
-    df = pd.DataFrame([data.dict()])  
-    
-    # Predict using the trained model
+    df = pd.DataFrame([data.dict()])
     prediction = model.predict(df)[0]
-    
-    # Convert 0/1 to True/False
-    result = bool(prediction)
-    
-    return {"heart_disease": result}
+    return {"heart_disease": bool(prediction)}
